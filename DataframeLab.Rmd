@@ -89,6 +89,8 @@ sum(grants$start_year == 2010)
 
 ```{r}
 
+sum(grants[grants$start_year == 2010, 'total_amount'])
+
 ```
 
 # Working with built-in data sets
@@ -114,13 +116,13 @@ Luckily, you can pass the USPersonalExpenditure variable as an argument to the `
 Do this, storing the result in a new variable
 
 ```{r}
-
+x <- data.frame(USPersonalExpenditure)
 ```
 
 What are the current column names of your dataframe?
 
 ```{r}
-
+colnames(x)
 ```
 
 Consider: why are they so strange? (Think about whether you could use a number like 1940 with dollar notation!)
@@ -128,39 +130,43 @@ Consider: why are they so strange? (Think about whether you could use a number l
 What are the current row names of your dataframe?
 
 ```{r}
-
+rownames(x)
 ```
 
 Add a column "Category" to your data frame that contains the rownames
 
 ```{r}
-
+x <- rownames_to_column(x, var = "Category")
 ```
 
 Consider how this data isn't tidy. Use the `pivot_longer()` function from last class to make the data tidy.
 
 ```{r}
-
+pivot_longer(x,
+             cols = c(X1940, X1945, X1950, X1955, X1960 ),
+             names_to = "Year",
+             values_to = "Amount_dollars"
+             )
 ```
 
 How much money was spent on personal care in 1940?
 
 ```{r}
-
+sum(x$Amount_dollars[x$Category == "Personal Care" & x$Year == "X1940"])
 ```
 
 How much money was spent on Food and Tobacco in 1960?
 
 ```{r}
 
-
+sum(x$Amount_dollars[x$Category == "Food and Tobacco" & x$Year == "X1960"])
 ```
 
 What was the highest expenditure category in 1960?
 
 ```{r}
-
-
+y <- x[x$Year == "X1960", ]
+y$Category[which.max(y$Amount_dollars)]
 ```
 
 Define a function `lowest_category` that takes in a year as a parameter, and returns the lowest spending category of that year
